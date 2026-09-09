@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#eaf7fc">
+  <meta name="description" content="Curling Puzzles: Daily Curling Hangman. Guess authentic curling terms with tactile liquid-glass controls and live curling rock physics on a pristine ice sheet.">
+  <title>Hangman — Curling Puzzles</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="puzzles.js" defer></script>
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <!-- Animated Background Canvas: Interactive & Ambient Curling Rocks on Ice Sheet -->
+  <canvas id="bg-canvas" aria-hidden="true"></canvas>
+
+  <!-- Subtle Canadian Rink Watermark Micro-Motif -->
+  <div class="rink-watermark" aria-hidden="true">
+    <svg viewBox="0 0 120 120" class="maple-leaf-silhouette">
+      <path d="M60 10 L65 26 L76 20 L74 34 L88 32 L82 46 L95 52 L84 62 L88 72 L72 70 L68 78 L63 76 L63 105 L57 105 L57 76 L52 78 L48 70 L32 72 L36 62 L25 52 L38 46 L32 32 L46 34 L44 20 L55 26 Z" />
+    </svg>
+  </div>
+
+  <!-- Platform Shell Container -->
+  <div id="app-shell" class="platform-shell">
+
+    <!-- Platform Header Navigation -->
+    <header class="platform-header glass-shell">
+      <div class="header-left">
+        <a href="https://tileworksgamesstudio.github.io/Curling-Menu/" class="brand-link" title="Universal Curling Menu">
+          <svg class="brand-stone-icon" viewBox="0 0 40 32" aria-hidden="true">
+            <ellipse cx="20" cy="22" rx="16" ry="8" fill="#475569" stroke="#153b5d" stroke-width="1.5"/>
+            <ellipse cx="20" cy="18" rx="15" ry="6" fill="#64748b"/>
+            <path d="M12 16 C12 8, 28 8, 28 16" fill="none" stroke="#d63b3b" stroke-width="3.2" stroke-linecap="round"/>
+            <circle cx="20" cy="10" r="2.2" fill="#d99b16"/>
+          </svg>
+          <span class="brand-title">Curling Puzzles</span>
+        </a>
+      </div>
+
+      <nav class="header-actions" aria-label="Quick Actions">
+        <button id="sound-toggle-btn" class="glass-pill-btn" type="button" aria-label="Toggle Sound: ON" aria-pressed="true">
+          <svg class="icon-sound-on" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" fill="currentColor"/>
+          </svg>
+          <svg class="icon-sound-off" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27l4.73 4.73H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z" fill="currentColor"/>
+          </svg>
+          <span class="btn-label" id="sound-label-text">Sound</span>
+        </button>
+
+        <a href="https://tileworksgamesstudio.github.io/Curling-Menu/" class="glass-pill-btn home-link-btn" title="Return to Universal Curling Menu">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="currentColor"/>
+          </svg>
+          <span class="btn-label">Home</span>
+        </a>
+      </nav>
+    </header>
+
+    <!-- SCREEN 1: DEDICATED MAIN MENU SCREEN -->
+    <main id="menu-screen" class="view-screen active-screen">
+      <div class="menu-hero-block">
+        <!-- Curling House Insignia Emblem -->
+        <div class="curling-house-emblem" aria-hidden="true">
+          <div class="house-ring ring-12ft"></div>
+          <div class="house-ring ring-8ft"></div>
+          <div class="house-ring ring-4ft"></div>
+          <div class="house-button"></div>
+          <div class="house-tee-cross"></div>
+        </div>
+
+        <h1 class="menu-game-title">Hangman</h1>
+        <p class="menu-tagline">Curling Terminology Challenge</p>
+      </div>
+
+      <!-- TODAY'S PUZZLE HERO CARD -->
+      <section class="today-card glass-panel" aria-labelledby="today-heading">
+        <div class="today-card-badge-row">
+          <span class="curling-tag-chip" id="today-day-chip">Today</span>
+          <span class="today-status-chip" id="today-status-chip">Unplayed</span>
+        </div>
+
+        <div class="today-details">
+          <h2 id="today-heading" class="today-date-text">Loading today...</h2>
+          <p class="today-curriculum-text" id="today-curriculum-text">Level 1 — Accessible Foundations</p>
+          <div class="today-meta-chips">
+            <span class="chip-item" id="today-difficulty-chip">Difficulty</span>
+            <span class="chip-item" id="today-category-chip">Category</span>
+          </div>
+        </div>
+
+        <button id="today-play-btn" class="primary-action-btn" type="button">
+          <span class="play-icon-triangle" aria-hidden="true">▶</span>
+          <span id="today-btn-text">Play Today</span>
+        </button>
+      </section>
+
+      <!-- VAULT ARCHIVE ACTION -->
+      <section class="menu-secondary-actions">
+        <button id="menu-vault-btn" class="secondary-action-btn glass-panel" type="button">
+          <div class="btn-content-left">
+            <svg class="vault-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+              <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0 8c-1.65 0-3-1.35-3-3s1.35-3 3-3 3 1.35 3 3-1.35 3-3 3z" fill="currentColor"/>
+            </svg>
+            <div class="text-group">
+              <span class="btn-main-title">Vault</span>
+              <span class="btn-sub-title" id="vault-count-subtitle">Past released puzzles</span>
+            </div>
+          </div>
+          <span class="chevron-indicator" aria-hidden="true">›</span>
+        </button>
+      </section>
+
+      <!-- CONTINUITY & STATS MINI ROW -->
+      <section class="menu-stats-row glass-panel" aria-label="Player Statistics Summary">
+        <div class="stat-mini-item">
+          <span class="stat-val" id="mini-stat-played">0</span>
+          <span class="stat-lbl">Played</span>
+        </div>
+        <div class="stat-mini-divider"></div>
+        <div class="stat-mini-item">
+          <span class="stat-val" id="mini-stat-winrate">0%</span>
+          <span class="stat-lbl">Win Rate</span>
+        </div>
+        <div class="stat-mini-divider"></div>
+        <div class="stat-mini-item">
+          <span class="stat-val" id="mini-stat-streak">0</span>
+          <span class="stat-lbl">Streak</span>
+        </div>
+      </section>
+    </main>
+
+    <!-- SCREEN 2: ACTIVE HANGMAN GAMEPLAY SCREEN -->
+    <main id="game-screen" class="view-screen" aria-live="polite">
+      <!-- Top Screen Bar -->
+      <div class="game-top-bar glass-shell">
+        <button id="game-back-to-menu-btn" class="glass-icon-btn" type="button" aria-label="Back to Main Menu">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" fill="currentColor"/>
+          </svg>
+          <span>Menu</span>
+        </button>
+
+        <div class="game-day-indicator">
+          <span id="game-puzzle-day-title" class="game-day-label">Day 0</span>
+          <span id="game-puzzle-meta" class="game-category-label">Curling Term</span>
+        </div>
+
+        <button id="game-help-btn" class="glass-icon-btn" type="button" aria-label="How to play">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 16h-2v-2h2v2zm1.07-7.75l-.9.92C12.45 11.9 12 12.5 12 14h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z" fill="currentColor"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- GAME HERO BOARD -->
+      <section class="game-board-container glass-panel" aria-label="Puzzle Board">
+
+        <!-- Visual Curling Stone Attempts Tracker (Replacing Gallows) -->
+        <div class="stones-tracker-wrapper" aria-label="Remaining Stones Tracker">
+          <div class="stones-header-row">
+            <span class="stones-tracker-label">Stones in Hand</span>
+            <span class="stones-tracker-count" id="stones-count-display">6 of 6</span>
+          </div>
+
+          <div class="curling-rink-sheet-track" id="stones-rack" role="status" aria-label="6 Stones remaining">
+            <!-- Dynamic Regulation Stones Rendered Dynamically -->
+          </div>
+        </div>
+
+        <!-- Clue / Category Panel -->
+        <div class="puzzle-clue-card">
+          <div class="clue-tag-row">
+            <span class="clue-chip" id="game-category-chip">Category</span>
+            <span class="clue-diff-chip" id="game-difficulty-chip">Difficulty</span>
+          </div>
+          <p class="clue-description" id="game-clue-text">Loading clue...</p>
+        </div>
+
+        <!-- Word Letters Display Grid -->
+        <div class="word-slots-container" id="word-slots-container" role="region" aria-label="Word letters to guess">
+          <!-- Letter tiles dynamically created -->
+        </div>
+
+        <!-- Accessible announcement live region -->
+        <div id="sr-announcement" class="sr-only" aria-live="assertive"></div>
+      </section>
+
+      <!-- Tactile On-Screen QWERTY Keyboard -->
+      <section class="keyboard-container" aria-label="On-screen Keyboard">
+        <div class="keyboard-row" id="kb-row-1"></div>
+        <div class="keyboard-row" id="kb-row-2"></div>
+        <div class="keyboard-row" id="kb-row-3"></div>
+      </section>
+    </main>
+
+    <!-- SCREEN 3: VAULT ARCHIVE SCREEN -->
+    <main id="vault-screen" class="view-screen">
+      <div class="vault-top-bar glass-shell">
+        <button id="vault-back-to-menu-btn" class="glass-icon-btn" type="button" aria-label="Back to Menu">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" fill="currentColor"/>
+          </svg>
+          <span>Menu</span>
+        </button>
+        <div class="vault-header-title">
+          <h2>Vault</h2>
+          <span class="vault-subtext" id="vault-header-subtext">Released Puzzles</span>
+        </div>
+        <div style="width: 44px;"></div>
+      </div>
+
+      <!-- Vault Puzzles Grid (strictly released past puzzles only) -->
+      <div class="vault-content-container">
+        <div id="vault-puzzles-list" class="vault-list-grid" role="list">
+          <!-- Released past days rendered via script.js -->
+        </div>
+        <p id="vault-empty-message" class="vault-empty-state glass-panel hidden">
+          No previous days released yet. Tomorrow, today's puzzle slides into the Vault!
+        </p>
+      </div>
+    </main>
+
+  </div> <!-- End #app-shell -->
+
+  <!-- RESULT MODAL -->
+  <div id="result-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-result-title">
+    <div class="modal-card glass-panel">
+      <div class="modal-curling-badge" id="modal-badge-graphic" aria-hidden="true">
+        <!-- SVG injected dynamically for win / loss -->
+      </div>
+
+      <h2 id="modal-result-title" class="modal-title">End Complete</h2>
+      <p id="modal-result-subtitle" class="modal-subtitle">You cleared the house!</p>
+
+      <!-- Revealed Word Display -->
+      <div class="modal-word-reveal glass-shell">
+        <span class="word-reveal-label">Target Term</span>
+        <span class="word-reveal-text" id="modal-word-text">BUTTON</span>
+      </div>
+
+      <!-- Curling Lore Explanation -->
+      <div class="modal-context-box">
+        <p id="modal-context-text" class="modal-context-paragraph">Contextual curling lore...</p>
+      </div>
+
+      <!-- Quick Game Stats -->
+      <div class="modal-stats-grid">
+        <div class="modal-stat-box">
+          <span class="stat-big" id="modal-stat-played">0</span>
+          <span class="stat-small">Played</span>
+        </div>
+        <div class="modal-stat-box">
+          <span class="stat-big" id="modal-stat-winrate">0%</span>
+          <span class="stat-small">Win %</span>
+        </div>
+        <div class="modal-stat-box">
+          <span class="stat-big" id="modal-stat-streak">0</span>
+          <span class="stat-small">Streak</span>
+        </div>
+        <div class="modal-stat-box">
+          <span class="stat-big" id="modal-stat-maxstreak">0</span>
+          <span class="stat-small">Best</span>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="modal-btn-row">
+        <button id="modal-share-btn" class="primary-action-btn" type="button">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z" fill="currentColor"/>
+          </svg>
+          <span id="modal-share-label">Share Result</span>
+        </button>
+
+        <button id="modal-close-btn" class="secondary-action-btn" type="button">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW TO PLAY / HELP MODAL -->
+  <div id="help-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-help-title">
+    <div class="modal-card glass-panel">
+      <h2 id="modal-help-title" class="modal-title">How to Play</h2>
+
+      <div class="help-content-list">
+        <div class="help-item">
+          <span class="help-step-number">1</span>
+          <p><strong>Solve the curling term:</strong> Guess the hidden curling word one letter at a time using your keyboard.</p>
+        </div>
+        <div class="help-item">
+          <span class="help-step-number">2</span>
+          <p><strong>Protect your rocks:</strong> You begin each end with <strong>6 curling stones</strong> in hand. Each incorrect letter burns one stone.</p>
+        </div>
+        <div class="help-item">
+          <span class="help-step-number">3</span>
+          <p><strong>Clear the end:</strong> Reveal all letters before your stones run out to win the end and advance your daily streak!</p>
+        </div>
+        <div class="help-item">
+          <span class="help-step-number">4</span>
+          <p><strong>Daily schedule:</strong> A new authentic curling puzzle arrives every midnight. Released puzzles slide into your <strong>Vault</strong>.</p>
+        </div>
+      </div>
+
+      <button id="help-modal-close-btn" class="primary-action-btn" type="button">Got It</button>
+    </div>
+  </div>
+
+</body>
+</html>
