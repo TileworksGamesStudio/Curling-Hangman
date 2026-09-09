@@ -1,11 +1,12 @@
 /**
  * CURLING PUZZLES — HANGMAN ENGINE + PLATFORM SHELL
  * Features:
- * 1. 2D Interactive Background Curling Stone Physics Simulation with Fixed Timestep Elastic Collisions
+ * 1. 2D Interactive Background Curling Stone Physics Simulation with Fixed Timestep Elastic Collisions & Retina DPI
  * 2. Deterministic Calendar Scheduling Baseline (8 September 2026 = Day 0)
  * 3. Future Puzzle Privacy & Strict Boundary Guard
  * 4. Web Audio API Tactile Granite Thump & Ice Chime Synthesizer
  * 5. Versioned LocalStorage Continuity & Statistics Tracking
+ * 6. Responsive Viewport-First Mobile Scaling & Overflow Safeguards
  */
 
 (function () {
@@ -47,7 +48,6 @@
       if (!this.enabled || !this.ctx) return;
       try {
         const now = this.ctx.currentTime;
-        // Low resonant granite thump
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         osc.type = "sine";
@@ -162,7 +162,7 @@
   const sound = new SoundEngine();
 
   /* ==========================================================================
-     2. BACKGROUND CURLING ROCK SIMULATION & FIXED TIMESTEP ENGINE
+     2. BACKGROUND CURLING ROCK SIMULATION & RETINA CANVAS ENGINE
      ========================================================================== */
   class BackgroundRinkSimulation {
     constructor(canvas) {
@@ -174,6 +174,7 @@
       this.accumulator = 0;
       this.width = 0;
       this.height = 0;
+      this.dpr = 1;
       this.isQuietMode = false;
       this.reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -198,8 +199,16 @@
     }
 
     resize() {
-      this.width = this.canvas.width = window.innerWidth;
-      this.height = this.canvas.height = window.innerHeight;
+      this.dpr = Math.min(window.devicePixelRatio || 1, 2);
+      this.width = window.innerWidth;
+      this.height = window.innerHeight;
+
+      this.canvas.width = Math.round(this.width * this.dpr);
+      this.canvas.height = Math.round(this.height * this.dpr);
+      this.canvas.style.width = this.width + "px";
+      this.canvas.style.height = this.height + "px";
+
+      this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
     }
 
     setQuietMode(quiet) {
@@ -209,7 +218,7 @@
     initRocks() {
       const count = this.width < 600 ? 4 : 6;
       this.rocks = [];
-      const baseRadius = this.width < 600 ? 24 : 30;
+      const baseRadius = this.width < 600 ? 22 : 28;
 
       for (let i = 0; i < count; i++) {
         let attempts = 0;
@@ -230,7 +239,7 @@
         } while (overlapping && attempts < 50);
 
         const angle = Math.random() * Math.PI * 2;
-        const speed = 0.22 + Math.random() * 0.32;
+        const speed = 0.2 + Math.random() * 0.3;
 
         this.rocks.push({
           x,
@@ -242,14 +251,14 @@
           team: i % 2 === 0 ? "red" : "yellow",
           rotation: Math.random() * Math.PI * 2,
           angularVel: (Math.random() - 0.5) * 0.006,
-          isTakeout: false
+          isTakeout: false,
+          speckleOffset: i * 17
         });
       }
     }
 
     triggerTakeoutRock() {
-      // Occasional ambient high-speed delivery rock
-      const baseRadius = this.width < 600 ? 24 : 30;
+      const baseRadius = this.width < 600 ? 22 : 28;
       const x = Math.random() * (this.width - baseRadius * 2) + baseRadius;
       const y = -baseRadius * 1.5;
       const targetX = this.width * 0.5 + (Math.random() - 0.5) * this.width * 0.6;
@@ -267,15 +276,16 @@
         team: Math.random() > 0.5 ? "red" : "yellow",
         rotation: 0,
         angularVel: 0.015,
-        isTakeout: true
+        isTakeout: true,
+        speckleOffset: 99
       });
     }
 
     updatePhysics(stepMs) {
       const rocks = this.rocks;
       const restitution = 0.78; // Regulation granite rebound elasticity
-      const damping = 0.9994;   // Pristine pebbled ice glide
-      const targetMaxSpeed = this.isQuietMode ? 0.35 : 1.8;
+      const damping = 0.9994;   // Pebbled ice glide damping
+      const targetMaxSpeed = this.isQuietMode ? 0.32 : 1.8;
 
       // 1. Position & Motion Update
       for (let i = rocks.length - 1; i >= 0; i--) {
@@ -302,7 +312,7 @@
           }
         }
 
-        // Maintain minimum gentle glide
+        // Maintain gentle glide
         const speed = Math.hypot(r.vx, r.vy);
         if (speed < 0.16 && !r.isTakeout) {
           const restoreAngle = r.rotation;
@@ -323,7 +333,6 @@
           r.y = r.radius;
           r.vy = Math.abs(r.vy) * restitution;
         } else if (r.y - r.radius > this.height) {
-          // If a takeout rock has sailed past the bottom, recycle it
           if (r.isTakeout) {
             rocks.splice(i, 1);
             continue;
@@ -345,7 +354,7 @@
           const minDist = r1.radius + r2.radius;
 
           if (dist < minDist && dist > 0) {
-            // Overlap correction (anti-sticking)
+            // Positional overlap resolution (anti-sticking)
             const overlap = (minDist - dist) * 0.5;
             const nx = dx / dist;
             const ny = dy / dist;
@@ -355,7 +364,7 @@
             r2.x += nx * overlap;
             r2.y += ny * overlap;
 
-            // Collision momentum transfer
+            // Momentum transfer
             const dvx = r2.vx - r1.vx;
             const dvy = r2.vy - r1.vy;
             const velAlongNormal = dvx * nx + dvy * ny;
@@ -367,11 +376,9 @@
               r2.vx += impulse * nx;
               r2.vy += impulse * ny;
 
-              // Spin transfer
               r1.angularVel += (Math.random() - 0.5) * 0.008;
               r2.angularVel += (Math.random() - 0.5) * 0.008;
 
-              // Ambient granite collision sound
               if (Math.abs(impulse) > 0.12) {
                 sound.playRockCollision(Math.abs(impulse));
               }
@@ -380,7 +387,7 @@
         }
       }
 
-      // Check takeout timer
+      // Takeout Timer
       this.nextTakeoutTimer -= stepMs;
       if (this.nextTakeoutTimer <= 0) {
         this.nextTakeoutTimer = 35000 + Math.random() * 25000;
@@ -396,7 +403,7 @@
       // 1. Subtle Sheet Rink Geometry
       this.ctx.save();
       this.ctx.strokeStyle = "rgba(21, 59, 93, 0.05)";
-      this.ctx.lineWidth = 2;
+      this.ctx.lineWidth = 1.5;
 
       // Centre line
       this.ctx.beginPath();
@@ -409,17 +416,17 @@
       const cy = this.height * 0.32;
       this.ctx.beginPath();
       this.ctx.arc(cx, cy, 140, 0, Math.PI * 2);
-      this.ctx.strokeStyle = "rgba(21, 59, 93, 0.04)";
+      this.ctx.strokeStyle = "rgba(21, 59, 93, 0.035)";
       this.ctx.stroke();
 
       this.ctx.beginPath();
       this.ctx.arc(cx, cy, 95, 0, Math.PI * 2);
-      this.ctx.strokeStyle = "rgba(214, 59, 59, 0.035)";
+      this.ctx.strokeStyle = "rgba(214, 59, 59, 0.03)";
       this.ctx.stroke();
 
       this.ctx.beginPath();
       this.ctx.arc(cx, cy, 48, 0, Math.PI * 2);
-      this.ctx.strokeStyle = "rgba(21, 59, 93, 0.04)";
+      this.ctx.strokeStyle = "rgba(21, 59, 93, 0.035)";
       this.ctx.stroke();
       this.ctx.restore();
 
@@ -450,6 +457,14 @@
         this.ctx.fillStyle = grad;
         this.ctx.fill();
 
+        // Subtle granite speckles
+        this.ctx.fillStyle = "rgba(255, 255, 255, 0.12)";
+        for (let s = 0; s < 4; s++) {
+          const spX = Math.cos(r.speckleOffset + s * 1.5) * (r.radius * 0.45);
+          const spY = Math.sin(r.speckleOffset + s * 1.5) * (r.radius * 0.45);
+          this.ctx.fillRect(spX, spY, 1.2, 1.2);
+        }
+
         // Granite upper bevel highlight
         this.ctx.lineWidth = 1.8;
         this.ctx.strokeStyle = "rgba(255, 255, 255, 0.55)";
@@ -475,7 +490,7 @@
         const handleStroke = r.team === "red" ? "#b92e34" : "#b88210";
 
         this.ctx.beginPath();
-        this.ctx.roundRect(-r.radius * 0.52, -5, r.radius * 1.04, 10, 5);
+        this.ctx.roundRect(-r.radius * 0.52, -4.5, r.radius * 1.04, 9, 4.5);
         this.ctx.fillStyle = handleCol;
         this.ctx.fill();
         this.ctx.lineWidth = 1.2;
@@ -484,13 +499,13 @@
 
         // Upper handle shine highlight
         this.ctx.beginPath();
-        this.ctx.roundRect(-r.radius * 0.45, -3.5, r.radius * 0.9, 3, 1.5);
+        this.ctx.roundRect(-r.radius * 0.45, -3, r.radius * 0.9, 2.8, 1.4);
         this.ctx.fillStyle = "rgba(255, 255, 255, 0.45)";
         this.ctx.fill();
 
-        // Center brass/gold handle screw bolt
+        // Center brass handle bolt
         this.ctx.beginPath();
-        this.ctx.arc(0, 0, 3.8, 0, Math.PI * 2);
+        this.ctx.arc(0, 0, 3.5, 0, Math.PI * 2);
         this.ctx.fillStyle = "#facc15";
         this.ctx.fill();
         this.ctx.strokeStyle = "#854d0e";
@@ -506,11 +521,10 @@
       let frameTime = timestamp - this.lastTime;
       this.lastTime = timestamp;
 
-      // Prevent spiral of death on tab resume
       if (frameTime > 250) frameTime = 250;
 
       this.accumulator += frameTime;
-      const FIXED_STEP = 1000 / 60; // 16.666ms
+      const FIXED_STEP = 1000 / 60;
 
       while (this.accumulator >= FIXED_STEP) {
         this.updatePhysics(FIXED_STEP);
@@ -549,7 +563,6 @@
      3. DETERMINISTIC DAILY SCHEDULING ENGINE
      ========================================================================== */
   function computeDayIndex(date = new Date()) {
-    // Local calendar midnight comparison against UTC Baseline
     const localMidnightUTC = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
     const baseUTC = Date.UTC(BASELINE_YEAR, BASELINE_MONTH, BASELINE_DAY);
     const diffDays = Math.floor((localMidnightUTC - baseUTC) / (1000 * 60 * 60 * 24));
@@ -776,8 +789,10 @@
     showScreen(screenEl) {
       [this.dom.menuScreen, this.dom.gameScreen, this.dom.vaultScreen].forEach((s) => {
         s.classList.remove("active-screen");
+        s.setAttribute("aria-hidden", "true");
       });
       screenEl.classList.add("active-screen");
+      screenEl.setAttribute("aria-hidden", "false");
       screenEl.scrollTop = 0;
 
       // Adjust background physics intensity (quiet during gameplay)
@@ -907,7 +922,6 @@
        8. ACTIVE GAMEPLAY & PUZZLE CONTROLS
        ========================================================================== */
     loadPuzzle(dayIndex) {
-      // Future protection guard: reject any unreleased days
       if (dayIndex > this.currentDay) {
         console.warn("Curling Puzzles: Access to unreleased puzzle denied.");
         return;
@@ -949,6 +963,7 @@
     renderStonesRack() {
       this.dom.stonesRack.innerHTML = "";
       this.dom.stonesCountDisplay.textContent = `${this.activeAttempts} of ${MAX_MISTAKES}`;
+      this.dom.stonesRack.setAttribute("aria-label", `${this.activeAttempts} of ${MAX_MISTAKES} stones remaining`);
 
       for (let i = 0; i < MAX_MISTAKES; i++) {
         const stoneDiv = document.createElement("div");
@@ -1118,7 +1133,6 @@
       stats.played++;
       if (won) {
         stats.won++;
-        // Maintain daily streak continuity
         if (this.activeDayIndex === this.currentDay) {
           if (stats.lastPlayedDay === this.currentDay - 1) {
             stats.currentStreak++;
