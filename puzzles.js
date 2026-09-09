@@ -17,7 +17,7 @@
  * Level 5: Expert Knowledge (Canadian Curling Lore, Advanced Tactics, Specialist Rules)
  */
 
-const CURLING_HANGMAN_PUZZLES = [
+var CURLING_HANGMAN_PUZZLES = [
   {
     id: "curl-hang-000",
     index: 0,
