@@ -3,309 +3,395 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#eaf7fc">
-  <meta name="description" content="Curling Puzzles: Daily Curling Hangman. Guess authentic curling terms with tactile liquid-glass controls and live curling rock physics on a pristine ice sheet.">
-  <title>Hangman — Curling Puzzles</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="puzzles.js" defer></script>
-  <script src="script.js" defer></script>
+  <title>Hangman — Canadian Curling Championship Edition</title>
+  <!-- High-impact sports editorial typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@700;800;900&family=Inter:wght@400;500;600;700;800&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-  <!-- Animated Background Canvas: Interactive & Ambient Curling Rocks on Ice Sheet -->
-  <canvas id="bg-canvas" aria-hidden="true"></canvas>
 
-  <!-- Subtle Canadian Rink Watermark Micro-Motif -->
-  <div class="rink-watermark" aria-hidden="true">
-    <svg viewBox="0 0 120 120" class="maple-leaf-silhouette" aria-hidden="true">
-      <path d="M60 10 L65 26 L76 20 L74 34 L88 32 L82 46 L95 52 L84 62 L88 72 L72 70 L68 78 L63 76 L63 105 L57 105 L57 76 L52 78 L48 70 L32 72 L36 62 L25 52 L38 46 L32 32 L46 34 L44 20 L55 26 Z" />
-    </svg>
+  <!-- LAYERED ICE ATMOSPHERE & AMBIENT FLOATING CURLING ICONS -->
+  <div id="curling-ambient-bg" class="curling-ambient-bg" aria-hidden="true">
+    <div class="ice-lighting-base"></div>
+    <div class="ice-vignette"></div>
+    <div class="ice-rink-sweep"></div>
+    <div id="curling-icons-layer" class="curling-icons-layer"></div>
   </div>
 
-  <!-- Platform Shell Container -->
-  <div id="app-shell" class="platform-shell">
+  <!-- REUSABLE SVG SYMBOLS (12 Distinct Curling Icons + Exact Supplied Canadian Maple Leaf) -->
+  <svg xmlns="http://www.w3.org/2000/svg" style="display: none;" aria-hidden="true">
+    <defs>
+      <!-- Official Canadian Maple Leaf Asset (Maple_Leaf_by_Merlin2525.svg) -->
+      <linearGradient id="mapleLeafGradient" y2="372.96" gradientUnits="userSpaceOnUse" y1="86.713" x2="411.88" x1="157.77">
+        <stop offset="0" stop-color="#d60021"/>
+        <stop offset="1" stop-color="#800010"/>
+      </linearGradient>
+      <filter id="mapleLeafShadow" color-interpolation-filters="sRGB">
+        <feGaussianBlur stdDeviation="9.319973"/>
+      </filter>
 
-    <!-- Platform Header Navigation -->
-    <header class="platform-header glass-shell">
-      <div class="header-left">
-        <a href="https://tileworksgamesstudio.github.io/Curling-Menu/" class="brand-link" title="Universal Curling Menu">
-          <svg class="brand-stone-icon" viewBox="0 0 40 32" aria-hidden="true">
-            <ellipse cx="20" cy="22" rx="16" ry="8" fill="#475569" stroke="#153b5d" stroke-width="1.5"/>
-            <ellipse cx="20" cy="18" rx="15" ry="6" fill="#64748b"/>
-            <path d="M12 16 C12 8, 28 8, 28 16" fill="none" stroke="#d63b3b" stroke-width="3.2" stroke-linecap="round"/>
-            <circle cx="20" cy="10" r="2.2" fill="#d99b16"/>
-          </svg>
-          <span class="brand-title">Curling Puzzles</span>
-        </a>
-      </div>
+      <g id="symbol-maple-leaf">
+        <g transform="translate(-250.85 -233.44)">
+          <path
+            d="m331.73 486.61 8.1527-20.11-65.765-60.873 17.392-9.2397-7.6092-44.568 39.676 4.3481 11.957-16.849 30.98 39.133-17.392-84.788 26.089 8.6962 25.001-45.655 23.371 44.568 27.719-7.6092-17.936 84.244 30.98-38.046 10.87 16.305 39.133-3.8046-5.9786 42.937 17.936 11.414-65.765 60.33 7.0656 21.197-58.699-9.7832 1.6305 72.83h-22.284l3.2611-73.374z"
+            style="opacity:.3;filter:url(#mapleLeafShadow);fill:#08121E"
+          />
+          <path
+            d="m325.8 480.69 8.1527-20.11-65.765-60.873 17.392-9.2397-7.6092-44.568 39.676 4.3481 11.957-16.849 30.98 39.133-17.392-84.788 26.089 8.6962 25.001-45.655 23.371 44.568 27.719-7.6092-17.936 84.244 30.98-38.046 10.87 16.305 39.133-3.8046-5.9786 42.937 17.936 11.414-65.765 60.33 7.0656 21.197-58.699-9.7832 1.6305 72.83h-22.284l3.2611-73.374z"
+            fill="url(#mapleLeafGradient)"
+          />
+        </g>
+      </g>
 
-      <nav class="header-actions" aria-label="Quick Actions">
-        <button id="sound-toggle-btn" class="glass-pill-btn" type="button" aria-label="Toggle Sound: ON" aria-pressed="true">
-          <svg class="icon-sound-on" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" fill="currentColor"/>
-          </svg>
-          <svg class="icon-sound-off" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-            <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27l4.73 4.73H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z" fill="currentColor"/>
-          </svg>
-          <span class="btn-label" id="sound-label-text">Sound</span>
-        </button>
+      <!-- 1. Curling Stone -->
+      <g id="icon-curling-stone">
+        <ellipse cx="50" cy="56" rx="42" ry="24" fill="#0D1F38" opacity="0.15"/>
+        <path d="M14,52 C14,32 86,32 86,52 C86,72 14,72 14,52 Z" fill="#EAF2F8" stroke="#0D1F38" stroke-width="4"/>
+        <ellipse cx="50" cy="52" rx="36" ry="16" fill="#D71920" stroke="#0D1F38" stroke-width="3"/>
+        <path d="M50,22 L50,42 M36,22 L64,22" stroke="#FFD83D" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
 
-        <a href="https://tileworksgamesstudio.github.io/Curling-Menu/" class="glass-pill-btn home-link-btn" title="Return to Universal Curling Menu">
-          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="currentColor"/>
-          </svg>
-          <span class="btn-label">Home</span>
-        </a>
-      </nav>
-    </header>
+      <!-- 2. Curling House / Rings -->
+      <g id="icon-curling-house">
+        <circle cx="50" cy="50" r="44" fill="none" stroke="#0D1F38" stroke-width="4"/>
+        <circle cx="50" cy="50" r="42" fill="#1C5C9E" opacity="0.3" stroke="#1C5C9E" stroke-width="3"/>
+        <circle cx="50" cy="50" r="28" fill="#F8FCFF" stroke="#0D1F38" stroke-width="3"/>
+        <circle cx="50" cy="50" r="14" fill="#D71920" stroke="#D71920" stroke-width="2"/>
+        <circle cx="50" cy="50" r="4" fill="#F8FCFF"/>
+        <line x1="6" y1="50" x2="94" y2="50" stroke="#0D1F38" stroke-width="2"/>
+        <line x1="50" y1="6" x2="50" y2="94" stroke="#D71920" stroke-width="2"/>
+      </g>
 
-    <!-- SCREEN 1: DEDICATED MAIN MENU SCREEN -->
-    <main id="menu-screen" class="view-screen active-screen" aria-hidden="false">
-      <div class="menu-hero-block">
-        <!-- Curling House Insignia Emblem -->
-        <div class="curling-house-emblem" aria-hidden="true">
-          <div class="house-ring ring-12ft"></div>
-          <div class="house-ring ring-8ft"></div>
-          <div class="house-ring ring-4ft"></div>
-          <div class="house-button"></div>
-          <div class="house-tee-cross"></div>
+      <!-- 3. Curling Broom -->
+      <g id="icon-curling-broom">
+        <line x1="82" y1="14" x2="30" y2="76" stroke="#D71920" stroke-width="6" stroke-linecap="round"/>
+        <line x1="82" y1="14" x2="30" y2="76" stroke="#FFD83D" stroke-width="2" stroke-dasharray="6 8"/>
+        <rect x="14" y="74" width="28" height="12" rx="4" transform="rotate(-40 28 80)" fill="#FFD83D" stroke="#0D1F38" stroke-width="3"/>
+      </g>
+
+      <!-- 4. Brush Head -->
+      <g id="icon-brush-head">
+        <rect x="16" y="32" width="68" height="28" rx="7" fill="#FF2B30" stroke="#0D1F38" stroke-width="4"/>
+        <rect x="22" y="38" width="56" height="16" rx="3" fill="#FFD83D"/>
+        <circle cx="50" cy="24" r="6" fill="#0D1F38"/>
+        <line x1="50" y1="24" x2="50" y2="32" stroke="#0D1F38" stroke-width="4"/>
+      </g>
+
+      <!-- 5. Hack -->
+      <g id="icon-hack">
+        <rect x="15" y="35" width="70" height="30" rx="4" fill="#0D1F38"/>
+        <rect x="24" y="42" width="20" height="16" rx="2" fill="#D71920"/>
+        <rect x="56" y="42" width="20" height="16" rx="2" fill="#FFD83D"/>
+        <line x1="8" y1="50" x2="92" y2="50" stroke="#D71920" stroke-width="2"/>
+      </g>
+
+      <!-- 6. Curling Stone Handle -->
+      <g id="icon-stone-handle">
+        <path d="M20,68 C20,38 32,24 50,24 C68,24 80,38 80,68" fill="none" stroke="#FF2B30" stroke-width="8" stroke-linecap="round"/>
+        <path d="M36,24 L64,24" stroke="#FFD83D" stroke-width="8" stroke-linecap="round"/>
+        <circle cx="50" cy="56" r="8" fill="#0D1F38"/>
+      </g>
+
+      <!-- 7. Hog Line -->
+      <g id="icon-hog-line">
+        <rect x="10" y="42" width="80" height="16" fill="#D71920" stroke="#0D1F38" stroke-width="3"/>
+        <line x1="10" y1="36" x2="90" y2="36" stroke="#0D1F38" stroke-width="2"/>
+        <line x1="10" y1="64" x2="90" y2="64" stroke="#0D1F38" stroke-width="2"/>
+      </g>
+
+      <!-- 8. Back Line -->
+      <g id="icon-back-line">
+        <line x1="10" y1="50" x2="90" y2="50" stroke="#1C5C9E" stroke-width="5"/>
+        <circle cx="50" cy="50" r="12" fill="none" stroke="#D71920" stroke-width="3"/>
+      </g>
+
+      <!-- 9. Centre Line -->
+      <g id="icon-centre-line">
+        <line x1="50" y1="10" x2="50" y2="90" stroke="#0D1F38" stroke-width="4" stroke-dasharray="8 6"/>
+        <circle cx="50" cy="50" r="8" fill="#FFD83D" stroke="#0D1F38" stroke-width="2"/>
+      </g>
+
+      <!-- 10. Ice Pebble Texture Motif -->
+      <g id="icon-pebble-motif">
+        <circle cx="30" cy="30" r="5" fill="#1C5C9E" opacity="0.6"/>
+        <circle cx="70" cy="26" r="4" fill="#D71920" opacity="0.5"/>
+        <circle cx="46" cy="52" r="7" fill="#0D1F38" opacity="0.7"/>
+        <circle cx="76" cy="68" r="5" fill="#FFD83D" opacity="0.7"/>
+        <circle cx="24" cy="74" r="6" fill="#1C5C9E" opacity="0.5"/>
+      </g>
+
+      <!-- 11. Scoreboard End Marker -->
+      <g id="icon-scoreboard-end">
+        <rect x="14" y="20" width="72" height="60" rx="6" fill="#0D1F38" stroke="#D71920" stroke-width="3"/>
+        <rect x="22" y="28" width="24" height="20" fill="#FFD83D"/>
+        <rect x="54" y="28" width="24" height="20" fill="#FF2B30"/>
+        <line x1="14" y1="56" x2="86" y2="56" stroke="#F8FCFF" stroke-width="2"/>
+        <text x="50" y="74" fill="#F8FCFF" font-family="sans-serif" font-size="11" font-weight="900" text-anchor="middle">END 10</text>
+      </g>
+
+      <!-- 12. Skip Delivery Silhouette -->
+      <g id="icon-skip-silhouette">
+        <circle cx="32" cy="32" r="8" fill="#0D1F38"/>
+        <path d="M26,44 L44,40 L68,64 L86,66" stroke="#0D1F38" stroke-width="5" stroke-linecap="round" fill="none"/>
+        <path d="M44,40 L28,74 L14,74" stroke="#0D1F38" stroke-width="5" stroke-linecap="round" fill="none"/>
+        <ellipse cx="76" cy="76" rx="14" ry="6" fill="#D71920" stroke="#0D1F38" stroke-width="2"/>
+      </g>
+    </defs>
+  </svg>
+
+  <div class="app-container">
+
+    <!-- 1. MAIN MENU SCREEN -->
+    <section id="menu-screen" class="screen screen-active" aria-label="Main Menu">
+      <!-- Curling Tournament Championship Framing -->
+      <header class="menu-header">
+        <div class="curling-league-pill">
+          <svg class="pill-maple-icon" viewBox="0 0 298.72 341.12" aria-hidden="true">
+            <use href="#symbol-maple-leaf"></use>
+          </svg>
+          <span class="pill-text">CANADIAN CURLING CHAMPIONSHIP</span>
+          <svg class="pill-maple-icon" viewBox="0 0 298.72 341.12" aria-hidden="true">
+            <use href="#symbol-maple-leaf"></use>
+          </svg>
         </div>
 
-        <h1 class="menu-game-title">Hangman</h1>
-        <p class="menu-tagline">Curling Terminology Challenge</p>
-      </div>
-
-      <!-- TODAY'S PUZZLE HERO CARD -->
-      <section class="today-card glass-panel" aria-labelledby="today-heading">
-        <div class="today-card-badge-row">
-          <span class="curling-tag-chip" id="today-day-chip">Today</span>
-          <span class="today-status-chip" id="today-status-chip">Unplayed</span>
-        </div>
-
-        <div class="today-details">
-          <h2 id="today-heading" class="today-date-text">Loading today...</h2>
-          <p class="today-curriculum-text" id="today-curriculum-text">Level 1 — Accessible Foundations</p>
-          <div class="today-meta-chips">
-            <span class="chip-item" id="today-difficulty-chip">Difficulty</span>
-            <span class="chip-item" id="today-category-chip">Category</span>
+        <div class="brand-title-wrap">
+          <h1 class="brand-title">HANGMAN</h1>
+          <div class="title-ice-line">
+            <span class="ice-dot red-stone"></span>
+            <span class="ice-rule"></span>
+            <span class="ice-dot yellow-stone"></span>
           </div>
         </div>
+      </header>
 
-        <button id="today-play-btn" class="primary-action-btn" type="button">
-          <span class="play-icon-triangle" aria-hidden="true">▶</span>
-          <span id="today-btn-text">Play Today</span>
-        </button>
-      </section>
+      <nav class="primary-nav" aria-label="Main Navigation">
+        <!-- 1. Daily Puzzle -->
+        <article class="nav-card primary-card">
+          <div class="card-ice-sweep"></div>
+          <div class="card-top">
+            <div class="curling-sheet-tag">
+              <span class="sheet-indicator red-marker"></span>
+              <span class="eyebrow">Sheet A • Daily Draw</span>
+            </div>
+            <span id="daily-status-tag" class="status-badge">Checking</span>
+          </div>
+          <h2 class="card-heading">Daily Puzzle</h2>
+          <p id="daily-card-clue" class="card-desc">Fetching today's challenge...</p>
+          <div class="card-footer">
+            <span id="daily-card-meta" class="meta-label"></span>
+            <button id="menu-play-btn" class="btn btn-primary" disabled>Play Daily</button>
+          </div>
+        </article>
 
-      <!-- VAULT ARCHIVE ACTION -->
-      <section class="menu-secondary-actions">
-        <button id="menu-vault-btn" class="secondary-action-btn glass-panel" type="button">
-          <div class="btn-content-left">
-            <svg class="vault-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
-              <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0 8c-1.65 0-3-1.35-3-3s1.35-3 3-3 3 1.35 3 3-1.35 3-3 3z" fill="currentColor"/>
-            </svg>
-            <div class="text-group">
-              <span class="btn-main-title">Vault</span>
-              <span class="btn-sub-title" id="vault-count-subtitle">Past released puzzles</span>
+        <!-- 2. Vault -->
+        <article class="nav-card">
+          <div class="card-top">
+            <div class="curling-sheet-tag">
+              <span class="sheet-indicator yellow-marker"></span>
+              <span class="eyebrow">Sheet B • Match Archive</span>
+            </div>
+            <span id="vault-count-badge" class="status-badge badge-neutral">Archive</span>
+          </div>
+          <div class="card-middle-row">
+            <div>
+              <h2 class="card-heading">Vault</h2>
+              <p class="card-desc">Browse and replay past tournament sheets</p>
+            </div>
+            <button id="menu-vault-btn" class="btn btn-secondary">Open Vault</button>
+          </div>
+        </article>
+
+        <!-- 3. Home -->
+        <article class="nav-card">
+          <div class="card-top">
+            <div class="curling-sheet-tag">
+              <span class="sheet-indicator neutral-marker"></span>
+              <span class="eyebrow">Clubhouse Portal</span>
+            </div>
+            <span class="status-badge badge-neutral">External</span>
+          </div>
+          <div class="card-middle-row">
+            <div>
+              <h2 class="card-heading">Home</h2>
+              <p class="card-desc">Return to the main club portal</p>
+            </div>
+            <a id="menu-home-btn" href="#" class="btn btn-secondary" aria-label="Go to Home Portal">Visit Home</a>
+          </div>
+        </article>
+      </nav>
+
+      <!-- Secondary Utility Controls -->
+      <footer class="menu-utility-bar">
+        <button id="menu-stats-btn" class="btn btn-ghost">Stats</button>
+        <span class="utility-divider" aria-hidden="true">•</span>
+        <button id="menu-rules-btn" class="btn btn-ghost">How to Play</button>
+      </footer>
+    </section>
+
+    <!-- 2. VAULT SCREEN -->
+    <section id="vault-screen" class="screen" aria-label="Vault Archive">
+      <header class="view-header">
+        <button id="vault-back-btn" class="btn btn-secondary btn-icon-back" aria-label="Back to Menu">← Menu</button>
+        <div class="header-title-group">
+          <h2 class="header-title">Vault Archive</h2>
+          <span class="header-sub">Past Ends & Matches</span>
+        </div>
+        <div class="header-placeholder" aria-hidden="true"></div>
+      </header>
+      <main class="vault-container">
+        <div id="vault-list" class="vault-list" role="list"></div>
+      </main>
+    </section>
+
+    <!-- 3. ACTIVE GAMEPLAY SCREEN -->
+    <section id="game-screen" class="screen" aria-label="Hangman Puzzle">
+      <!-- Gameplay Header: Back button + Puzzle Title ONLY -->
+      <header class="view-header">
+        <button id="game-back-btn" class="btn btn-secondary btn-icon-back" aria-label="Back to Menu">← Menu</button>
+        <div class="header-title-group">
+          <h2 id="puzzle-title" class="header-title">Puzzle</h2>
+        </div>
+        <div class="header-placeholder" aria-hidden="true"></div>
+      </header>
+
+      <main class="gameplay-area">
+        <!-- TOP: Status Icons & Apparatus -->
+        <section class="apparatus-section" aria-label="Strike Counter">
+          <div class="visual-wrapper">
+            <!-- Gallows SVG styled as Rink Scoring Apparatus -->
+            <div class="rink-scaffold-frame">
+              <svg id="hangman-svg" viewBox="0 0 140 135" class="gallows-svg" aria-hidden="true">
+                <!-- Structural Scaffold with Ice-Rink Markings -->
+                <line x1="20" y1="125" x2="65" y2="125" class="scaffold base" />
+                <line x1="38" y1="125" x2="38" y2="15" class="scaffold mast" />
+                <line x1="38" y1="15" x2="96" y2="15" class="scaffold beam" />
+                <line x1="38" y1="36" x2="58" y2="15" class="scaffold brace" />
+                <line x1="96" y1="15" x2="96" y2="30" class="scaffold rope" />
+                <!-- Strikes (1 to 6) in Vivid Stone Red -->
+                <circle id="strike-1" cx="96" cy="42" r="11" class="body-part strike-stone-head" />
+                <line id="strike-2" x1="96" y1="53" x2="96" y2="86" class="body-part" />
+                <line id="strike-3" x1="96" y1="64" x2="78" y2="78" class="body-part" />
+                <line id="strike-4" x1="96" y1="64" x2="114" y2="78" class="body-part" />
+                <line id="strike-5" x1="96" y1="86" x2="78" y2="112" class="body-part" />
+                <line id="strike-6" x1="96" y1="86" x2="114" y2="112" class="body-part" />
+              </svg>
+            </div>
+            
+            <div class="strikes-counter">
+              <span class="strikes-label">BURNT STONES</span>
+              <div id="strike-pips" class="strike-pips" aria-label="Strike indicators"></div>
+              <span id="strike-count-text" class="strikes-numeric">0 / 6</span>
             </div>
           </div>
-          <span class="chevron-indicator" aria-hidden="true">›</span>
-        </button>
-      </section>
+        </section>
 
-      <!-- CONTINUITY & STATS MINI ROW -->
-      <section class="menu-stats-row glass-panel" aria-label="Player Statistics Summary">
-        <div class="stat-mini-item">
-          <span class="stat-val" id="mini-stat-played">0</span>
-          <span class="stat-lbl">Played</span>
-        </div>
-        <div class="stat-mini-divider"></div>
-        <div class="stat-mini-item">
-          <span class="stat-val" id="mini-stat-winrate">0%</span>
-          <span class="stat-lbl">Win Rate</span>
-        </div>
-        <div class="stat-mini-divider"></div>
-        <div class="stat-mini-item">
-          <span class="stat-val" id="mini-stat-streak">0</span>
-          <span class="stat-lbl">Streak</span>
-        </div>
-      </section>
-    </main>
+        <!-- CENTER: The Star of the Screen (Game Board) -->
+        <section class="board-section" aria-label="Letter Board">
+          <div id="word-board" class="word-board" aria-live="polite"></div>
+        </section>
 
-    <!-- SCREEN 2: ACTIVE HANGMAN GAMEPLAY SCREEN -->
-    <main id="game-screen" class="view-screen" aria-hidden="true">
-      <!-- Top Screen Bar -->
-      <div class="game-top-bar glass-shell">
-        <button id="game-back-to-menu-btn" class="glass-icon-btn" type="button" aria-label="Back to Main Menu">
-          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" fill="currentColor"/>
-          </svg>
-          <span>Menu</span>
-        </button>
-
-        <div class="game-day-indicator">
-          <span id="game-puzzle-day-title" class="game-day-label">Day 0</span>
-          <span id="game-puzzle-meta" class="game-category-label">Curling Term</span>
-        </div>
-
-        <button id="game-help-btn" class="glass-icon-btn" type="button" aria-label="How to play">
-          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 16h-2v-2h2v2zm1.07-7.75l-.9.92C12.45 11.9 12 12.5 12 14h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z" fill="currentColor"/>
-          </svg>
-        </button>
-      </div>
-
-      <!-- GAME HERO BOARD -->
-      <section class="game-board-container glass-panel" aria-label="Puzzle Board">
-
-        <!-- Visual Curling Stone Attempts Tracker -->
-        <div class="stones-tracker-wrapper" aria-label="Remaining Stones Tracker">
-          <div class="stones-header-row">
-            <span class="stones-tracker-label">Stones in Hand</span>
-            <span class="stones-tracker-count" id="stones-count-display">6 of 6</span>
+        <!-- BOTTOM: Supporting Clue Text -->
+        <section class="clue-section" aria-label="Puzzle Clue">
+          <div class="clue-badge-wrapper">
+            <span id="game-category-tag" class="category-badge">Category</span>
           </div>
+          <p id="game-clue-text" class="clue-caption"></p>
+        </section>
 
-          <div class="curling-rink-sheet-track" id="stones-rack" role="status" aria-live="polite" aria-label="6 Stones remaining">
-            <!-- Dynamic Regulation Stones Rendered Dynamically -->
+        <!-- BOTTOM: Tactile Keyboard -->
+        <section class="keyboard-section" aria-label="Virtual Keyboard">
+          <div id="keyboard" class="keyboard-grid"></div>
+        </section>
+      </main>
+    </section>
+
+    <!-- STATS MODAL -->
+    <dialog id="stats-modal" class="modal-window" aria-labelledby="stats-heading">
+      <div class="modal-surface">
+        <header class="modal-header">
+          <div class="modal-title-wrap">
+            <svg class="modal-leaf-icon" viewBox="0 0 298.72 341.12" aria-hidden="true">
+              <use href="#symbol-maple-leaf"></use>
+            </svg>
+            <h2 id="stats-heading" class="modal-title">Player Statistics</h2>
           </div>
-        </div>
-
-        <!-- Clue / Category Panel -->
-        <div class="puzzle-clue-card">
-          <div class="clue-tag-row">
-            <span class="clue-chip" id="game-category-chip">Category</span>
-            <span class="clue-diff-chip" id="game-difficulty-chip">Difficulty</span>
+          <button class="modal-close" data-close aria-label="Close modal">&times;</button>
+        </header>
+        <div class="modal-content">
+          <div class="stats-overview-grid">
+            <div class="stat-card"><span id="stat-played" class="stat-val">0</span><span class="stat-lbl">Played</span></div>
+            <div class="stat-card"><span id="stat-win-rate" class="stat-val">0%</span><span class="stat-lbl">Win %</span></div>
+            <div class="stat-card"><span id="stat-streak" class="stat-val">0</span><span class="stat-lbl">Streak</span></div>
+            <div class="stat-card"><span id="stat-max-streak" class="stat-val">0</span><span class="stat-lbl">Best</span></div>
           </div>
-          <p class="clue-description" id="game-clue-text">Loading clue...</p>
-        </div>
-
-        <!-- Word Letters Display Grid -->
-        <div class="word-slots-container" id="word-slots-container" role="region" aria-label="Word letters to guess">
-          <!-- Letter tiles dynamically created -->
-        </div>
-
-        <!-- Accessible announcement live region -->
-        <div id="sr-announcement" class="sr-only" aria-live="assertive"></div>
-      </section>
-
-      <!-- Tactile On-Screen QWERTY Keyboard -->
-      <section class="keyboard-container" aria-label="On-screen Keyboard">
-        <div class="keyboard-row" id="kb-row-1"></div>
-        <div class="keyboard-row" id="kb-row-2"></div>
-        <div class="keyboard-row" id="kb-row-3"></div>
-      </section>
-    </main>
-
-    <!-- SCREEN 3: VAULT ARCHIVE SCREEN -->
-    <main id="vault-screen" class="view-screen" aria-hidden="true">
-      <div class="vault-top-bar glass-shell">
-        <button id="vault-back-to-menu-btn" class="glass-icon-btn" type="button" aria-label="Back to Menu">
-          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" fill="currentColor"/>
-          </svg>
-          <span>Menu</span>
-        </button>
-        <div class="vault-header-title">
-          <h2>Vault</h2>
-          <span class="vault-subtext" id="vault-header-subtext">Released Puzzles</span>
-        </div>
-        <div style="width: 44px;"></div>
-      </div>
-
-      <!-- Vault Puzzles Grid (strictly released past puzzles only) -->
-      <div class="vault-content-container">
-        <div id="vault-puzzles-list" class="vault-list-grid" role="list">
-          <!-- Released past days rendered via script.js -->
-        </div>
-        <p id="vault-empty-message" class="vault-empty-state glass-panel hidden">
-          No previous days released yet. Tomorrow, today's puzzle slides into the Vault!
-        </p>
-      </div>
-    </main>
-
-  </div> <!-- End #app-shell -->
-
-  <!-- RESULT MODAL -->
-  <div id="result-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-result-title">
-    <div class="modal-card glass-panel">
-      <div class="modal-curling-badge" id="modal-badge-graphic" aria-hidden="true">
-        <!-- SVG injected dynamically for win / loss -->
-      </div>
-
-      <h2 id="modal-result-title" class="modal-title">End Complete</h2>
-      <p id="modal-result-subtitle" class="modal-subtitle">You cleared the house!</p>
-
-      <!-- Revealed Word Display -->
-      <div class="modal-word-reveal glass-shell">
-        <span class="word-reveal-label">Target Term</span>
-        <span class="word-reveal-text" id="modal-word-text">BUTTON</span>
-      </div>
-
-      <!-- Curling Lore Explanation -->
-      <div class="modal-context-box">
-        <p id="modal-context-text" class="modal-context-paragraph">Contextual curling lore...</p>
-      </div>
-
-      <!-- Quick Game Stats -->
-      <div class="modal-stats-grid">
-        <div class="modal-stat-box">
-          <span class="stat-big" id="modal-stat-played">0</span>
-          <span class="stat-small">Played</span>
-        </div>
-        <div class="modal-stat-box">
-          <span class="stat-big" id="modal-stat-winrate">0%</span>
-          <span class="stat-small">Win %</span>
-        </div>
-        <div class="modal-stat-box">
-          <span class="stat-big" id="modal-stat-streak">0</span>
-          <span class="stat-small">Streak</span>
-        </div>
-        <div class="modal-stat-box">
-          <span class="stat-big" id="modal-stat-maxstreak">0</span>
-          <span class="stat-small">Best</span>
+          <div class="modal-sub-divider">
+            <span class="divider-line"></span>
+            <h3 class="modal-subtitle">Strike Distribution</h3>
+            <span class="divider-line"></span>
+          </div>
+          <div id="strike-distribution-bars" class="distribution-bars"></div>
         </div>
       </div>
+    </dialog>
 
-      <!-- Action Buttons -->
-      <div class="modal-btn-row">
-        <button id="modal-share-btn" class="primary-action-btn" type="button">
-          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-            <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z" fill="currentColor"/>
-          </svg>
-          <span id="modal-share-label">Share Result</span>
-        </button>
-
-        <button id="modal-close-btn" class="secondary-action-btn" type="button">Done</button>
+    <!-- HOW TO PLAY MODAL -->
+    <dialog id="rules-modal" class="modal-window" aria-labelledby="rules-heading">
+      <div class="modal-surface">
+        <header class="modal-header">
+          <div class="modal-title-wrap">
+            <svg class="modal-leaf-icon" viewBox="0 0 298.72 341.12" aria-hidden="true">
+              <use href="#symbol-maple-leaf"></use>
+            </svg>
+            <h2 id="rules-heading" class="modal-title">How to Play</h2>
+          </div>
+          <button class="modal-close" data-close aria-label="Close modal">&times;</button>
+        </header>
+        <div class="modal-content rules-body">
+          <ol class="rules-guide">
+            <li><strong>Objective:</strong> Guess the hidden curling term, phrase, or champion word one stone at a time.</li>
+            <li><strong>Strikes:</strong> Each incorrect letter adds <strong>1 burnt stone</strong>.</li>
+            <li><strong>Limit:</strong> The match ends if you accumulate <strong>6 strikes</strong>.</li>
+            <li><strong>Schedule:</strong> A fresh sheet arrives every day at midnight.</li>
+          </ol>
+        </div>
       </div>
-    </div>
+    </dialog>
+
+    <!-- RESULT MODAL -->
+    <dialog id="result-modal" class="modal-window" aria-labelledby="result-heading">
+      <div class="modal-surface">
+        <header class="modal-header">
+          <div class="modal-title-wrap">
+            <svg class="modal-leaf-icon" viewBox="0 0 298.72 341.12" aria-hidden="true">
+              <use href="#symbol-maple-leaf"></use>
+            </svg>
+            <h2 id="result-heading" class="modal-title">Match Complete</h2>
+          </div>
+          <button class="modal-close" data-close aria-label="Close modal">&times;</button>
+        </header>
+        <div class="modal-content result-body">
+          <div id="result-status-badge" class="result-banner">Solved</div>
+          <div class="solution-reveal">
+            <span class="solution-label">Official Solution</span>
+            <div id="result-answer" class="solution-text"></div>
+          </div>
+          <p id="result-note" class="result-caption"></p>
+          <div class="modal-action-row">
+            <button id="result-share-btn" class="btn btn-primary">Share Score</button>
+            <button id="result-menu-btn" class="btn btn-secondary">Menu</button>
+          </div>
+          <div id="share-toast" class="toast-bubble" role="status" aria-live="polite">Result copied to clipboard</div>
+        </div>
+      </div>
+    </dialog>
+
   </div>
 
-  <!-- HOW TO PLAY / HELP MODAL -->
-  <div id="help-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-help-title">
-    <div class="modal-card glass-panel">
-      <h2 id="modal-help-title" class="modal-title">How to Play</h2>
+  <div id="screen-reader-feed" class="sr-only" aria-live="assertive"></div>
 
-      <div class="help-content-list">
-        <div class="help-item">
-          <span class="help-step-number">1</span>
-          <p><strong>Solve the curling term:</strong> Guess the hidden curling word one letter at a time using your keyboard.</p>
-        </div>
-        <div class="help-item">
-          <span class="help-step-number">2</span>
-          <p><strong>Protect your rocks:</strong> You begin each end with <strong>6 curling stones</strong> in hand. Each incorrect letter burns one stone.</p>
-        </div>
-        <div class="help-item">
-          <span class="help-step-number">3</span>
-          <p><strong>Clear the end:</strong> Reveal all letters before your stones run out to win the end and advance your daily streak!</p>
-        </div>
-        <div class="help-item">
-          <span class="help-step-number">4</span>
-          <p><strong>Daily schedule:</strong> A new authentic curling puzzle arrives every midnight. Released puzzles slide into your <strong>Vault</strong>.</p>
-        </div>
-      </div>
-
-      <button id="help-modal-close-btn" class="primary-action-btn" type="button">Got It</button>
-    </div>
-  </div>
-
+  <script src="./script.js"></script>
 </body>
 </html>
